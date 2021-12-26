@@ -25,6 +25,7 @@ const run = async () => {
     const categoryCollection = database.collection("categories");
     const productCollection = database.collection("products");
     const usersCollection = database.collection("users");
+    const orderCollection = database.collection("orders");
     //get all categories, post categories
     app
       .get("/categories", async (req, res) => {
@@ -109,6 +110,23 @@ const run = async () => {
       }
       res.send({ admin: isAdmin });
     });
+
+    //post order , get all order and get order by id
+    app
+      .post("/order", async (req, res) => {
+        const order = req.body;
+        const result = await orderCollection.insertOne(order);
+        res.send(result);
+      })
+      .get("/order/all", async (req, res) => {
+        const result = await orderCollection.find({}).toArray();
+        res.send(result);
+      })
+      .get("/orders/:emailId", async (req, res) => {
+        const emailId = req.params.emailId;
+        const result = await orderCollection.find({ email: emailId }).toArray();
+        res.send(result);
+      });
   } finally {
     // await client.close();
   }
